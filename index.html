@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deer mouse heartbeat</title>
+<meta name="description" content="Feel one minute of a western deer mouse's heart: 630 beats in 60 seconds.">
+<style>
+  :root {
+    --bg: #120a0c;
+    --ink: #f3e9e6;
+    --muted: #a8948f;
+    --accent: #e0475b;
+    --panel: #1d1215;
+    --line: #3a2629;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  #flash {
+    position: fixed; inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  body.gentle.on #flash { opacity: .22; }
+  body.full.on #flash { opacity: 1; background: #ffd9de; }
+
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 24px 16px;
+    text-align: center;
+    overflow-y: auto;
+  }
+  /* auto margins center when it fits and stay scrollable when it doesn't */
+  .screen > :first-child { margin: auto; }
+  @media (max-width: 480px) {
+    .modes { gap: 8px; margin: 14px 0; }
+    .mode { padding: 10px 12px; }
+    .warning { margin: 14px 0; }
+  }
+  .screen[hidden] { display: none; }
+  .card { max-width: 520px; }
+  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.1; margin: 0 0 12px; letter-spacing: -.02em; }
+  h2 { font-size: 20px; margin: 0 0 8px; }
+  p { color: var(--muted); margin: 0 0 16px; }
+  .sci { font-style: italic; }
+
+  .warning {
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 4px solid #f2b84b;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 20px 0;
+  }
+  .warning strong { color: #f2b84b; }
+  .warning p { margin: 0; font-size: 14px; }
+
+  .modes { display: grid; gap: 10px; margin: 20px 0; text-align: left; }
+  .mode {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 14px; cursor: pointer;
+  }
+  .mode:has(input:checked) { border-color: var(--accent); }
+  .mode input { margin-top: 4px; accent-color: var(--accent); }
+  .mode span { display: block; font-size: 14px; color: var(--muted); }
+  .mode b { font-weight: 600; }
+  .row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; color: var(--muted); font-size: 14px; }
+  .row input { accent-color: var(--accent); }
+
+  button {
+    font: inherit; font-weight: 600;
+    background: var(--accent); color: #fff;
+    border: 0; border-radius: 999px;
+    padding: 12px 28px; cursor: pointer;
+  }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  #run { pointer-events: none; }
+  .heart {
+    width: min(38vw, 220px); height: auto;
+    fill: var(--accent);
+    transform-origin: center;
+    transition: transform 30ms linear;
+  }
+  body.on .heart { transform: scale(1.12); }
+  .count { font-size: clamp(56px, 14vw, 120px); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; margin-top: 16px; }
+  .sub { font-variant-numeric: tabular-nums; }
+  .hint { position: fixed; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 13px; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .heart { transition: none; }
+  }
+</style>
+</head>
+<body class="gentle">
+<div id="flash"></div>
+
+<section class="screen" id="intro">
+  <div class="card">
+    <h1>One minute as a deer mouse</h1>
+    <p>A western deer mouse (<span class="sci">Peromyscus sonoriensis</span>) has a resting heart rate around 630 beats per minute, and it climbs to about 1,000 when the mouse is running. This page beats that many times in 60 seconds so you can feel the pace. Yours is probably beating about 70.</p>
+
+    <div class="warning" role="note">
+      <p><strong>Photosensitivity warning.</strong> This page flashes 10 to 17 times per second, which is in the range that can trigger seizures in people with photosensitive epilepsy. Don't run it if that applies to you or anyone watching. Tap, click, or press any key to stop at any time.</p>
+    </div>
+
+    <div class="modes" role="radiogroup" aria-label="Heart rate">
+      <label class="mode"><input type="radio" name="rate" value="630" checked>
+        <div><b>Resting: 630 bpm</b><span>About 10.5 beats per second.</span></div></label>
+      <label class="mode"><input type="radio" name="rate" value="1000">
+        <div><b>Running: 1,000 bpm</b><span>About 16.7 beats per second.</span></div></label>
+    </div>
+
+    <div class="modes" role="radiogroup" aria-label="Flash style">
+      <label class="mode"><input type="radio" name="mode" value="gentle" checked>
+        <div><b>Gentle pulse</b><span>A soft red tint with the heart. Recommended.</span></div></label>
+      <label class="mode"><input type="radio" name="mode" value="full">
+        <div><b>Full-screen flash</b><span>Bright, high-contrast flash on every beat.</span></div></label>
+      <label class="mode"><input type="radio" name="mode" value="none">
+        <div><b>Heart only</b><span>No screen flash. Just the beating heart and counter.</span></div></label>
+    </div>
+
+    <div class="row">
+      <label><input type="checkbox" id="sound"> Play a tick on each beat</label>
+    </div>
+
+    <button id="startBtn">I understand, start</button>
+  </div>
+</section>
+
+<section class="screen" id="run" hidden aria-live="off">
+  <div>
+    <svg class="heart" viewBox="0 0 32 29" aria-hidden="true"><path d="M16 29 2.4 15.4A8 8 0 0 1 16 4.1a8 8 0 0 1 13.6 11.3z"/></svg>
+    <div class="count" id="count">0</div>
+    <p class="sub"><span id="secs">0.0</span> s of 60 · <span id="bpmLabel">630</span> bpm</p>
+  </div>
+  <div class="hint">Tap or press any key to stop</div>
+</section>
+
+<section class="screen" id="done" hidden>
+  <div class="card">
+    <h2 id="doneTitle">630 beats. 60 seconds.</h2>
+    <p id="doneText">That was one minute of a deer mouse's heart. In the same minute, a resting human heart beats about 70 times, roughly 9 times slower.</p>
+    <button id="againBtn">Run it again</button>
+  </div>
+</section>
+
+<script>
+  // Set per run from the rate picker. TOTAL = BPM, so every run is one minute.
+  let BPM, TOTAL, INTERVAL, ON_MS, HUMAN;
+
+  const $ = id => document.getElementById(id);
+  const body = document.body;
+  const intro = $('intro'), run = $('run'), done = $('done');
+  const countEl = $('count'), secsEl = $('secs');
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelector('input[value="none"]').checked = true;
+  }
+
+  let running = false, start = 0, beat = 0, sound = false, audio = null;
+
+  function tick() {
+    if (!audio) return;
+    const t = audio.currentTime;
+    const osc = audio.createOscillator(), gain = audio.createGain();
+    osc.frequency.value = 180;
+    gain.gain.setValueAtTime(0.25, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+    osc.connect(gain).connect(audio.destination);
+    osc.start(t); osc.stop(t + 0.04);
+  }
+
+  function show(el) { [intro, run, done].forEach(s => s.hidden = s !== el); }
+
+  function begin() {
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    body.className = mode;
+    BPM = Number(document.querySelector('input[name="rate"]:checked').value);
+    TOTAL = BPM;
+    INTERVAL = 60000 / BPM;            // ~95 ms resting, 60 ms running
+    ON_MS = Math.min(40, INTERVAL * 0.45);
+    HUMAN = BPM >= 1000 ? 150 : 70;    // compare running to running, resting to resting
+    $('bpmLabel').textContent = BPM.toLocaleString();
+    sound = $('sound').checked;
+    if (sound) {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      audio.resume();
+    }
+    beat = 0; countEl.textContent = '0'; secsEl.textContent = '0.0';
+    show(run);
+    running = true;
+    // Short delay so the start click doesn't immediately count as a stop.
+    setTimeout(() => { addEventListener('keydown', stop); addEventListener('pointerdown', stop); }, 250);
+    start = performance.now();
+    requestAnimationFrame(frame);
+  }
+
+  function frame(now) {
+    if (!running) return;
+    const elapsed = now - start;
+    // Schedule from the start time, not frame to frame, so beats never drift.
+    const due = Math.min(TOTAL, Math.floor(elapsed / INTERVAL) + 1);
+    if (due > beat) {
+      beat = due;
+      countEl.textContent = beat;
+      if (sound) tick();
+    }
+    secsEl.textContent = Math.min(60, elapsed / 1000).toFixed(1);
+    const phase = elapsed - (beat - 1) * INTERVAL;
+    body.classList.toggle('on', phase < ON_MS);
+    if (beat >= TOTAL && phase >= ON_MS) return finish(true);
+    requestAnimationFrame(frame);
+  }
+
+  function finish(complete) {
+    running = false;
+    body.classList.remove('on');
+    removeEventListener('keydown', stop);
+    removeEventListener('pointerdown', stop);
+    if (complete) {
+      secsEl.textContent = '60.0';
+      const state = HUMAN === 70 ? 'resting' : 'running';
+      $('doneTitle').textContent = BPM.toLocaleString() + ' beats. 60 seconds.';
+      $('doneText').textContent = "That was one minute of a " + state + " deer mouse's heart. In the same minute, a " + state + " human heart beats about " + HUMAN + ' times, roughly ' + Math.round(BPM / HUMAN) + ' times slower.';
+    } else {
+      $('doneTitle').textContent = 'Stopped at ' + beat + ' beats.';
+      $('doneText').textContent = 'That took ' + secsEl.textContent + " seconds. A human heart at the same effort would have beaten about " + Math.round(beat * HUMAN / BPM) + ' times in the same span.';
+    }
+    show(done);
+    $('againBtn').focus();
+  }
+
+  function stop(e) { if (running) { e.preventDefault(); finish(false); } }
+
+  // Pause rather than skip ahead if the tab is hidden mid-run.
+  document.addEventListener('visibilitychange', () => { if (document.hidden && running) finish(false); });
+
+  $('startBtn').addEventListener('click', begin);
+  $('againBtn').addEventListener('click', () => { body.className = 'gentle'; show(intro); });
+</script>
+</body>
+</html>
